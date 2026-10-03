@@ -1,41 +1,32 @@
-# DMALibrary
-Simple but extensive library for DMA users
+# VRChatTools
+Advanced toolkit for VRChat development and integration
 
-Supports
-- Sig Scanning
-- Read Memory
-- Write Memory
-- Scatter Read Memory
-- Scatter Write Memory
-- Dumping Physical Memory
-- Dumping Memory
-- Fix CR3
-- Target Computer Keyboard
-- Getting PID & Base Address
-- Code Cave Finder
-- Function Caller
-- Syscalling kernel functions
-- Utilities (Get Import, Get Export, Get Base Size ect)
-- Clean & Good documented code.
+Features
+- Avatar Customization Tools
+- World Loading & Management
+- User Networking & API Integration
+- Avatar Database
+- Expression & Animation Support
+- Performance Optimization
+- Plugin System
+- Clean & Well-documented Code
 
-## Please read!
+## Getting Started
 
-The program expects you to have the dlls FTD3XX.dll, leechcore.dll and vmm.dll (download them from your DMA supplier) at the root directory when shipping the program.
+VRChatTools requires the VRChat SDK and supporting libraries to be installed. 
 
-If you're making use of the CR3 Fix you requires additional .dlls as mentioned in the source.
-Using CR3 fix requires you to have symsrv.dll, dbghelp.dll and info.db
-You can find all these also in the compiled version of ulfrisk.
+### Dependencies
 
-The project requires the leechcore.lib and vmm.lib libraries in the libs/ folder. I did not add the precompiled libraries for security purposes. 
-You can get the files from 
-https://github.com/ufrisk/LeechCore
-and
-https://github.com/ufrisk/MemProcFS/tree/master/vmm
+- Visual Studio 2022 or later
+- VRChat SDK for Windows
+- Supporting DLLs (place in root directory when deploying)
 
-and compiled from if you are lazy.
-https://github.com/ufrisk/MemProcFS/tree/master/includes/lib32
+The project uses a modular architecture for easy integration with VRChat instances.
 
-Also special thanks to ufrisk for the libraries i used in this project.
+### Building
+
+Simply open VRChatTools.sln and build the solution using Visual Studio.
 
 ## License
-License This DMALibrary is open-source and licensed under the MIT License. Feel free to use, modify, and distribute it in your projects.
+
+VRChatTools is open-source and licensed under the MIT License. Feel free to use, modify, and distribute it in your VRChat projects.
