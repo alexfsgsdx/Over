@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Avatar\Avatar.h" />
+    <ClInclude Include="Overlay\Overlay.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Memory\InputManager.h" />
     <ClInclude Include="Memory\Memory.h" />
@@ -162,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Avatar\Avatar.cpp" />
+    <ClCompile Include="Overlay\Overlay.cpp" />
     <ClCompile Include="Memory\InputManager.cpp" />
     <ClCompile Include="Memory\Memory.cpp" />
     <ClCompile Include="Memory\Registry.cpp" />
