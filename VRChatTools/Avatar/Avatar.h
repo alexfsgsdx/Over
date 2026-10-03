@@ -45,7 +45,20 @@ struct AnimationData {
 	float fps = 24.0f;
 };
 
+struct PlayerData {
+	std::string display_name;
+	std::string user_id;
+	size_t player_ptr = 0;
+	size_t avatar_ptr = 0;
+	bool is_local = false;
+	std::string trust_rank; // Visitor, New User, User, Known User, Trusted
+	std::string status; // Online, Away, Busy
+};
+
 struct AvatarStats {
+	// Player who owns this avatar
+	PlayerData player;
+
 	// Basic Info
 	std::string avatar_name;
 	std::string creator;
@@ -96,72 +109,30 @@ struct AvatarStats {
 
 class AvatarAnalyzer {
 public:
-	/**
-	* @brief Analyzes an avatar and returns statistics
-	* @param avatar_ptr pointer to avatar object in memory
-	* @return AvatarStats structure with avatar information
-	*/
 	static AvatarStats AnalyzeAvatar(size_t avatar_ptr);
-
-	/**
-	* @brief Prints formatted avatar stats to console
-	* @param stats the avatar stats to display
-	*/
 	static void PrintAvatarStats(const AvatarStats& stats);
-
-	/**
-	* @brief Gets performance rating based on metrics
-	* @param stats the avatar stats
-	* @return performance rating string
-	*/
 	static std::string GetPerformanceRating(const AvatarStats& stats);
 
-	/**
-	* @brief Scans for all avatars in the scene
-	* @return vector of AvatarStats for all found avatars
-	*/
+	// Player scanning — iterates over every player in the instance
+	static std::vector<PlayerData> GetAllPlayers();
 	static std::vector<AvatarStats> ScanAllAvatars();
-
-	/**
-	* @brief Gets a specific avatar's stats by name
-	* @param avatar_name the name of the avatar to find
-	* @return AvatarStats if found, empty stats if not
-	*/
-	static AvatarStats GetAvatarByName(const std::string& avatar_name);
+	static AvatarStats GetAvatarByPlayerName(const std::string& display_name);
+	static void PrintAllPlayerStats();
+	static void PrintPlayerSummary();
 
 private:
-	/**
-	* @brief Reads mesh data from memory
-	*/
 	static std::vector<MeshData> ReadMeshes(size_t avatar_ptr);
-
-	/**
-	* @brief Reads texture data from memory
-	*/
 	static std::vector<TextureData> ReadTextures(size_t avatar_ptr);
-
-	/**
-	* @brief Reads light data from memory
-	*/
 	static std::vector<LightData> ReadLights(size_t avatar_ptr);
-
-	/**
-	* @brief Reads material data from memory
-	*/
 	static std::vector<MaterialData> ReadMaterials(size_t avatar_ptr);
-
-	/**
-	* @brief Reads bone data from memory
-	*/
 	static std::vector<BoneData> ReadBones(size_t avatar_ptr);
-
-	/**
-	* @brief Reads animation data from memory
-	*/
 	static std::vector<AnimationData> ReadAnimations(size_t avatar_ptr);
-
-	/**
-	* @brief Calculates performance metrics
-	*/
 	static AvatarStats::PerformanceMetrics CalculateMetrics(const AvatarStats& stats);
+
+	// Internal player list helpers
+	static size_t GetPlayerManagerPtr();
+	static size_t GetPlayerListPtr(size_t manager_ptr);
+	static int GetPlayerCount(size_t manager_ptr);
+	static PlayerData ReadPlayerData(size_t player_ptr);
+	static size_t GetAvatarPtrFromPlayer(size_t player_ptr);
 };

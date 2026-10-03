@@ -5,12 +5,22 @@
 #include "framework.h"
 #include "Avatar/Avatar.h"
 
-// Export avatar stats for a given avatar pointer
 extern "C" AvatarStats GetAvatarStats(size_t avatar_ptr) {
 	return AvatarAnalyzer::AnalyzeAvatar(avatar_ptr);
 }
 
-// Print avatar stats to console
 extern "C" void DisplayAvatarStats(const AvatarStats& stats) {
 	AvatarAnalyzer::PrintAvatarStats(stats);
+}
+
+extern "C" void ScanAndPrintAllPlayers() {
+	AvatarAnalyzer::PrintAllPlayerStats();
+}
+
+extern "C" void PrintPlayerSummaryTable() {
+	AvatarAnalyzer::PrintPlayerSummary();
+}
+
+extern "C" AvatarStats GetPlayerAvatarStats(const char* display_name) {
+	return AvatarAnalyzer::GetAvatarByPlayerName(display_name);
 }

@@ -151,16 +151,104 @@ std::string AvatarAnalyzer::GetPerformanceRating(const AvatarStats& stats) {
 	return "Very Poor";
 }
 
+std::vector<PlayerData> AvatarAnalyzer::GetAllPlayers() {
+	std::vector<PlayerData> players;
+
+	size_t manager = GetPlayerManagerPtr();
+	if (!manager) return players;
+
+	int count = GetPlayerCount(manager);
+	size_t list_ptr = GetPlayerListPtr(manager);
+	if (!list_ptr || count <= 0) return players;
+
+	for (int i = 0; i < count; i++) {
+		// Each entry in the player list is a pointer-sized element
+		size_t player_ptr = 0; // TODO: mem.Read<size_t>(list_ptr + i * sizeof(size_t))
+		if (!player_ptr) continue;
+
+		PlayerData pd = ReadPlayerData(player_ptr);
+		pd.player_ptr = player_ptr;
+		pd.avatar_ptr = GetAvatarPtrFromPlayer(player_ptr);
+		players.push_back(pd);
+	}
+
+	return players;
+}
+
 std::vector<AvatarStats> AvatarAnalyzer::ScanAllAvatars() {
 	std::vector<AvatarStats> all_stats;
-	// TODO: Implement avatar scanning from memory
+
+	auto players = GetAllPlayers();
+	for (const auto& player : players) {
+		if (!player.avatar_ptr) continue;
+
+		AvatarStats stats = AnalyzeAvatar(player.avatar_ptr);
+		stats.player = player;
+		all_stats.push_back(stats);
+	}
+
 	return all_stats;
 }
 
-AvatarStats AvatarAnalyzer::GetAvatarByName(const std::string& avatar_name) {
-	AvatarStats stats;
-	// TODO: Implement avatar lookup by name
-	return stats;
+AvatarStats AvatarAnalyzer::GetAvatarByPlayerName(const std::string& display_name) {
+	auto players = GetAllPlayers();
+	for (const auto& player : players) {
+		if (player.display_name == display_name && player.avatar_ptr) {
+			AvatarStats stats = AnalyzeAvatar(player.avatar_ptr);
+			stats.player = player;
+			return stats;
+		}
+	}
+	return AvatarStats{};
+}
+
+void AvatarAnalyzer::PrintAllPlayerStats() {
+	auto all_stats = ScanAllAvatars();
+
+	std::cout << "\n========== ALL PLAYERS IN INSTANCE ==========" << std::endl;
+	std::cout << "Players Found: " << all_stats.size() << "\n" << std::endl;
+
+	for (const auto& stats : all_stats) {
+		std::cout << ">> Player: " << stats.player.display_name
+			<< " [" << stats.player.trust_rank << "]"
+			<< (stats.player.is_local ? " (YOU)" : "")
+			<< std::endl;
+		PrintAvatarStats(stats);
+	}
+
+	std::cout << "=============================================\n" << std::endl;
+}
+
+void AvatarAnalyzer::PrintPlayerSummary() {
+	auto all_stats = ScanAllAvatars();
+
+	std::cout << "\n===== PLAYER SUMMARY =====" << std::endl;
+	std::cout << std::left;
+
+	printf("%-20s %-12s %-10s %-10s %-8s %-8s %-12s\n",
+		"Player", "Trust", "Triangles", "TexMem", "Lights", "Bones", "Rating");
+	printf("%-20s %-12s %-10s %-10s %-8s %-8s %-12s\n",
+		"------", "-----", "---------", "------", "------", "-----", "------");
+
+	for (const auto& stats : all_stats) {
+		std::string name = stats.player.display_name;
+		if (name.length() > 18) name = name.substr(0, 18) + "..";
+
+		char tex_buf[16];
+		snprintf(tex_buf, sizeof(tex_buf), "%.1fMB",
+			stats.total_texture_memory / (1024.0f * 1024.0f));
+
+		printf("%-20s %-12s %-10u %-10s %-8zu %-8u %-12s\n",
+			name.c_str(),
+			stats.player.trust_rank.c_str(),
+			stats.total_triangles,
+			tex_buf,
+			stats.lights.size(),
+			stats.total_bones,
+			stats.metrics.performance_rating.c_str());
+	}
+
+	std::cout << "\n=========================\n" << std::endl;
 }
 
 std::vector<MeshData> AvatarAnalyzer::ReadMeshes(size_t avatar_ptr) {
@@ -197,6 +285,33 @@ std::vector<AnimationData> AvatarAnalyzer::ReadAnimations(size_t avatar_ptr) {
 	std::vector<AnimationData> animations;
 	// TODO: Implement animation reading from memory
 	return animations;
+}
+
+size_t AvatarAnalyzer::GetPlayerManagerPtr() {
+	// TODO: Read the PlayerManager singleton pointer from VRChat's memory
+	// Typically found via sig scan or static offset from base
+	return 0;
+}
+
+size_t AvatarAnalyzer::GetPlayerListPtr(size_t manager_ptr) {
+	// TODO: Read the internal player list array from the manager
+	return 0;
+}
+
+int AvatarAnalyzer::GetPlayerCount(size_t manager_ptr) {
+	// TODO: Read player count from the manager struct
+	return 0;
+}
+
+PlayerData AvatarAnalyzer::ReadPlayerData(size_t player_ptr) {
+	PlayerData pd;
+	// TODO: Read display name, user ID, trust rank, status from player object
+	return pd;
+}
+
+size_t AvatarAnalyzer::GetAvatarPtrFromPlayer(size_t player_ptr) {
+	// TODO: Follow the pointer chain from player -> avatar gameobject
+	return 0;
 }
 
 AvatarStats::PerformanceMetrics AvatarAnalyzer::CalculateMetrics(const AvatarStats& stats) {
